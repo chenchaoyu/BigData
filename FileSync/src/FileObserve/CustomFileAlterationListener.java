@@ -11,10 +11,10 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class CustomFileAlterationListener extends FileAlterationListenerAdaptor{
-	private String folderPath;
-	public CustomFileAlterationListener(String folderPath) {
+	
+	public CustomFileAlterationListener() {
 		// TODO Auto-generated constructor stub
-		this.folderPath=folderPath;
+		
 	}
 	@Override
 	public void onStart(FileAlterationObserver observer) {
@@ -24,8 +24,9 @@ public class CustomFileAlterationListener extends FileAlterationListenerAdaptor{
 	}
 	@Override
 	public void onFileChange(final File file) {
-		if(file.getName()!="log.txt") {
-		FileSyncer fileSyncer=new FileSyncer(folderPath);
+		String name=file.getName();
+		if(!name.equals("log.txt")) {
+		FileSyncer fileSyncer=FileSyncer.getInstance();
 		fileSyncer.upLoadFile(file);
 		
 		String filePathString=file.getAbsolutePath();
@@ -33,8 +34,9 @@ public class CustomFileAlterationListener extends FileAlterationListenerAdaptor{
 		}
 	}
 	public void onFileCreate(final File file) {
-		if(file.length()>0&&file.getName()!="log.txt") {
-			FileSyncer fileSyncer=new FileSyncer(folderPath);
+		String name=file.getName();
+		if(file.length()>0&&!name.equals("log.txt")) {
+			FileSyncer fileSyncer=FileSyncer.getInstance();
 			fileSyncer.upLoadFile(file);
 			String filePathString=file.getAbsolutePath();
 			System.out.println("成功上传文件"+filePathString);
@@ -43,8 +45,9 @@ public class CustomFileAlterationListener extends FileAlterationListenerAdaptor{
 	}
 	
 	public void onFileDelete(final File file) {
-		if(file.getName()!="log.txt") {
-		FileSyncer fileSyncer=new FileSyncer(folderPath);
+		String name=file.getName();
+		if(!name.equals("log.txt")) {
+		FileSyncer fileSyncer=FileSyncer.getInstance();
 		fileSyncer.deleteFile(file);
 		}
 	}

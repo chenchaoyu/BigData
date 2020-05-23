@@ -6,45 +6,80 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.omg.CORBA.INITIALIZE;
+
 import Utils.Utils;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
-import com.amazonaws.services.computeoptimizer.model.Summary;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.AbortMultipartUploadRequest;
 import com.amazonaws.services.s3.model.CompleteMultipartUploadRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
-import com.amazonaws.services.s3.model.ListVersionsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.PartETag;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.s3.model.UploadPartRequest;
 
 public class FileSyncer {
-	private String folderPath;
-	private final static String bucketName = "chenchaoyu";
-	private final static String accessKey = "B295DE50D353418FD1F6";
-	private final static String secretKey = "Wzg1NkVEQjRGMEIwQTRGRTIxM0NDQzgxQjAwQjFGNDg4M0I0NjU5MkVd";
 	private final static String serviceEndpoint = "http://scuts3.depts.bingosoft.net:29999";
 	private final static String signingRegion = "";
 	private static long partSize = 5 << 20;
-	private final BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
-	private final ClientConfiguration ccfg = new ClientConfiguration().withUseExpectContinue(false);
-	private final EndpointConfiguration endpoint = new EndpointConfiguration(serviceEndpoint, signingRegion);
-	private final AmazonS3 s3= AmazonS3ClientBuilder.standard()
-			.withCredentials(new AWSStaticCredentialsProvider(credentials)).withClientConfiguration(ccfg)
-			.withEndpointConfiguration(endpoint).withPathStyleAccessEnabled(true).build();
+	private static FileSyncer fileSyncer=new FileSyncer();
+	private static String folderPath;
+	private static String bucketName;
+	private static String accessKey ;
+	private static String secretKey ;
+	
+	private static BasicAWSCredentials credentials;
+	private static ClientConfiguration ccfg;
+	private static EndpointConfiguration endpoint;
+	private static AmazonS3 s3;
 
 
 	
-	public FileSyncer(String folderPath) {
+	private FileSyncer() {
 		
-		this.folderPath=folderPath;
 	}
+	
+	public static FileSyncer getInstance() {
+		return fileSyncer;	
+	}
+	
+	public static void initialize(String folderPath,String accessKey,String secretKey,String bucketName) {
+	
+		
+		Boolean folderNotNull=!(folderPath.equals(""));
+		Boolean accessNotNull=!(accessKey.equals(""));
+		Boolean secretNotNull=!(secretKey.equals(""));
+		Boolean bucketNotNull=!(bucketName.equals(""));
+		
+		if(folderNotNull&&accessNotNull&&secretNotNull&&bucketNotNull) {
+			FileSyncer.folderPath=folderPath;
+			FileSyncer.accessKey=accessKey;
+			FileSyncer.secretKey=secretKey;
+			FileSyncer.bucketName=bucketName;
+		}else {
+			FileSyncer.folderPath="E:/test";
+			FileSyncer.accessKey="B295DE50D353418FD1F6";
+			FileSyncer.secretKey="Wzg1NkVEQjRGMEIwQTRGRTIxM0NDQzgxQjAwQjFGNDg4M0I0NjU5MkVd";
+			FileSyncer.bucketName="chenchaoyu";
+
+		}
+		
+		credentials = new BasicAWSCredentials(FileSyncer.accessKey, FileSyncer.secretKey);
+		ccfg = new ClientConfiguration().withUseExpectContinue(false);
+		endpoint = new EndpointConfiguration(serviceEndpoint, signingRegion);
+		s3= AmazonS3ClientBuilder.standard()
+				.withCredentials(new AWSStaticCredentialsProvider(credentials)).withClientConfiguration(ccfg)
+				.withEndpointConfiguration(endpoint).withPathStyleAccessEnabled(true).build();
+
+	}
+	
 	public void continueUpLoadFile(File file,String uploadId,int n,ArrayList<PartETag> partETags) {
 
 		String filePath = file.getAbsolutePath();
@@ -69,7 +104,7 @@ public class FileSyncer {
 
 				// Step 1: Upload parts.
 				long filePosition = 0+n*partSize;
-				FilePathList.Remove(filePath);
+				
 				for (int i=n+1; filePosition < contentLength; i++) {
 					// Last part can be less than 5 MB. Adjust part size.
 					long pSize = Math.min(partSize, contentLength - filePosition);
@@ -90,12 +125,12 @@ public class FileSyncer {
 					filePosition += pSize;
 					
 					Utils.writetxtfile("0", folderPath+"\\log.txt");
-					Utils.filechaseWrite("\n"+filePath+"   "+uploadId+"   "+i+"   ", folderPath+"\\log.txt");
+					Utils.filechaseWrite("\n"+filePath+"$$$$"+uploadId+"$$$$"+i+"$$$$", folderPath+"\\log.txt");
 					for(PartETag part:partETags) {
 						String eTagString=part.getETag();
 						int partNumber=part.getPartNumber();
 						String partNumberString=Integer.toString(partNumber);
-						Utils.filechaseWrite(partNumberString+"   "+eTagString+"   ", folderPath+"\\log.txt");
+						Utils.filechaseWrite(partNumberString+"$$$$"+eTagString+"$$$$", folderPath+"\\log.txt");
 					}
 					ArrayList<String> filePaths=FilePathList.getList();
 					for(String p:filePaths) {
@@ -159,7 +194,7 @@ public class FileSyncer {
 
 				// Step 2: Upload parts.
 				long filePosition = 0;
-				FilePathList.Remove(filePath);
+				
 				for (int i=1; filePosition < contentLength; i++) {
 					// Last part can be less than 5 MB. Adjust part size.
 					long pSize = Math.min(partSize, contentLength - filePosition);
@@ -180,12 +215,12 @@ public class FileSyncer {
 					filePosition += pSize;
 					
 					Utils.writetxtfile("0", folderPath+"\\log.txt");
-					boolean success=Utils.filechaseWrite("\n"+filePath+"   "+uploadId+"   "+i+"   ", folderPath+"\\log.txt");
+					boolean success=Utils.filechaseWrite("\n"+filePath+"$$$$"+uploadId+"$$$$"+i+"$$$$", folderPath+"\\log.txt");
 					for(PartETag part:partETags) {
 						String eTagString=part.getETag();
 						int partNumber=part.getPartNumber();
 						String partNumberString=Integer.toString(partNumber);
-						Utils.filechaseWrite(partNumberString+"   "+eTagString+"   ", folderPath+"\\log.txt");
+						Utils.filechaseWrite(partNumberString+"$$$$"+eTagString+"$$$$", folderPath+"\\log.txt");
 					}
 					ArrayList<String> filePaths=FilePathList.getList();
 					if(filePaths.size()>0) {
