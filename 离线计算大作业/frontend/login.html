@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="utf-8">
+    <title>登录</title>
+    <base href="<%=basePath%>">
+    <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="lib/css/login.css">
+    <link rel="stylesheet" href="lib/css/footer.css">
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+</head>
+<body>
+<div id="loginMain">
+    <div id="loginContent">
+
+        <!--logo及信息显示-->
+        <div class="table" style="top:20px;position: relative">
+            <div class="page-header" style="margin-top: 5px">
+                <h1><div id="loginLogo"></div><small style="left:70px;top:15px;position: absolute">数据库登录</small></h1>
+            </div>
+        </div>
+
+        <!--输入框和登录按钮-->
+        <div id="loginMiddle">
+            <form class="form-horizontal" style="margin-top: 45px">
+                <div class="form-group">
+                    <label for="inputPassword3" class="col-sm-2 control-label"></label>
+                    <div class="input-label">
+                        <input type="text" class="form-control" id="inputUrl" name="url" placeholder="jdbc:hive2://bigdata41.depts.bingosoft.net:22241/">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword3" class="col-sm-2 control-label"></label>
+                    <div class="input-label">
+                        <input type="text" class="form-control" id="inputDriver" name="driver" placeholder="org.apache.hive.jdbc.HiveDriver">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label"></label>
+                    <div class="input-label">
+                        <input type="text" class="form-control" id="inputEmail3" name="username" placeholder="用户名">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword3" class="col-sm-2 control-label"></label>
+                    <div class="input-label">
+                        <input type="password" class="form-control" id="inputPassword3" name="password" placeholder="密码">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <div class="checkbox">
+                            <label style="margin-left: 20%">
+                                <input type="checkbox" id="isUseCookie" name="isUseCookie"> 同意用户协议
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-" style="width: 230px; margin: auto">
+                        <button type="button" class="btn btn-default loginButton" style="width: 230px">登录</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+<script src="lib/js/config.js"></script>
+<script src="lib/js/login.js"></script>
+<script>
+    redirectToIndex();
+</script>
+</html>
