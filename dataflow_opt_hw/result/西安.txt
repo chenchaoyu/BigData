@@ -1,0 +1,3 @@
+{"username":"斋藤飞鸟","buy_time":"2020-06-02 07:46:46.0","buy_address":"乃木坂站","origin":"东京","destination":"西安"}
+{"username":"斋藤飞鸟","buy_time":"2020-06-02 07:46:46.0","buy_address":"乃木坂站","origin":"东京","destination":"西安"}
+{"username":"斋藤飞鸟","buy_time":"2020-06-02 07:46:46.0","buy_address":"乃木坂站","origin":"东京","destination":"西安"}
